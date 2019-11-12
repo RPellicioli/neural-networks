@@ -9,10 +9,13 @@ import { NeuralNetworkService } from './services/neural-network.service';
 })
 export class AppComponent implements OnInit {
     title = 'neural-networks';
+    public characteres: Array<NeuralNetworkService.Character>;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
     public ngOnInit(): void {
+        this.characteres = this.neuralNetworkService.characteres;
+
         let m1 = new MatrixService.Matrix(1, 2);
         let m2 = new MatrixService.Matrix(2, 1);
 
