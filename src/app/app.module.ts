@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { MatrixService } from './services/matrix.service';
+import { NeuralNetworkService } from './services/neural-network.service';
 
 @NgModule({
     declarations: [
@@ -12,7 +13,8 @@ import { MatrixService } from './services/matrix.service';
         BrowserModule
     ],
     providers: [
-        MatrixService
+        MatrixService,
+        NeuralNetworkService
     ],
     bootstrap: [AppComponent]
 })

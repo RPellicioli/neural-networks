@@ -22,7 +22,7 @@ export class MatrixService {
         matrix.onMap((value, i, j) => {
             let sum = 0;
 
-            for(let k = 0; k < m2.rows; k++){
+            for (let k = 0; k < m1.columns; k++) {
                 let elm1 = m1.data[i][k];
                 let elm2 = m2.data[k][j];
 
@@ -34,6 +34,28 @@ export class MatrixService {
 
         return matrix;
     }
+
+    public arrayToMatrix(arr: Array<number>): MatrixService.Matrix {
+        let matrix = new MatrixService.Matrix(arr.length, 1);
+
+        matrix.onMap((value, i, j) => {
+            return arr[i];
+        })
+        
+        return matrix;
+    }
+
+    public onMap(matrix: MatrixService.Matrix, callback: (value: number, i: number, j: number) => void): MatrixService.Matrix {
+        let newMatrix = new MatrixService.Matrix(matrix.rows, matrix.columns);
+        
+        newMatrix.data = newMatrix.data.map((m, i) => {
+            return m.map((value, j) => {
+                return callback(value, i, j);
+            });
+        });
+
+        return newMatrix;
+    }
 }
 
 export namespace MatrixService {
@@ -42,19 +64,29 @@ export namespace MatrixService {
         public columns: number;
         public data: Array<any> = [];
 
-        constructor(rows:number, columns: number){
+        constructor(rows: number, columns: number) {
             this.rows = rows;
             this.columns = columns;
 
-            for(let i = 0; i < rows; i++){
+            for (let i = 0; i < rows; i++) {
                 let arr = [];
 
-                for(let j = 0; j < columns; j++){
-                    arr.push(Math.floor(Math.random()*10));
+                for (let j = 0; j < columns; j++) {
+                    arr.push(Math.floor(Math.random() * 10));
                 }
 
                 this.data.push(arr);
             }
+        }
+
+        public print(): void {
+            console.table(this.data);
+        }
+
+        public randomize(): void {
+            this.onMap((value, i, j) => {
+                return Math.random() * 2 - 1;
+            })
         }
 
         public onMap(callback: (value: number, i: number, j: number) => void): Matrix {
@@ -63,7 +95,7 @@ export namespace MatrixService {
                     return callback(value, i, j);
                 });
             });
-    
+
             return this;
         }
     }
