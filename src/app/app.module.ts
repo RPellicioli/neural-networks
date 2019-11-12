@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { MatrizService } from './services/matriz.service';
+import { MatrixService } from './services/matrix.service';
 
 @NgModule({
     declarations: [
@@ -12,7 +12,7 @@ import { MatrizService } from './services/matriz.service';
         BrowserModule
     ],
     providers: [
-        MatrizService
+        MatrixService
     ],
     bootstrap: [AppComponent]
 })

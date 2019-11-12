@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MatrizService } from './matriz.service';
+import { MatrixService } from './matrix.service';
 
-describe('MatrizService', () => {
+describe('MatrixService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: MatrizService = TestBed.get(MatrizService);
+    const service: MatrixService = TestBed.get(MatrixService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatrizService } from './services/matriz.service';
+import { MatrixService } from './services/matrix.service';
 
 @Component({
     selector: 'app-root',
@@ -9,11 +9,14 @@ import { MatrizService } from './services/matriz.service';
 export class AppComponent implements OnInit {
     title = 'neural-networks';
 
-    constructor(public matrizService: MatrizService){}
+    constructor(public matrixService: MatrixService){}
 
     public ngOnInit(): void {
-        let m = new MatrizService.Matriz(4, 4);
+        let m1 = new MatrixService.Matrix(1, 2);
+        let m2 = new MatrixService.Matrix(2, 1);
+        console.log(m1.data, m2.data);
 
-        console.log(m)
+        let multiply = this.matrixService.multiply(m1, m2);
+        console.log(multiply.data);
     }
 }
