@@ -135,25 +135,107 @@ export class NeuralNetworkService {
     public feedForward(neuralNetwork: NeuralNetworkService.NeuralNetwork, input: Array<number>): void {
         // INPUT => HIDE
         let inputMatrix = this.matrixService.arrayToMatrix(input);
-        let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsForInputHide, inputMatrix);
+        let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsInputForHide, inputMatrix);
 
-        hideMatrix = this.matrixService.sum(hideMatrix, neuralNetwork.biasForInputHide);
+        hideMatrix = this.matrixService.sum(hideMatrix, neuralNetwork.biasInputForHide);
         hideMatrix.onMap((value, i, j) => {
             return this.sigmoid(value);
         });
 
         // HIDE => OUTPUT
-        let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsForHideOutput, hideMatrix);
-        outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasForHideOutput);
+        let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsHideForOutput, hideMatrix);
+        outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasHideForOutput);
+        outputMatrix.onMap((value, i, j) => {
+            return this.sigmoid(value);
+        });
+    }
+
+    public train(neuralNetwork: NeuralNetworkService.NeuralNetwork, input: Array<number>, output: Array<number>): void {
+        // INPUT => HIDE
+        let inputMatrix = this.matrixService.arrayToMatrix(input);
+        let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsInputForHide, inputMatrix);
+
+        hideMatrix = this.matrixService.sum(hideMatrix, neuralNetwork.biasInputForHide);
+        hideMatrix.onMap((value, i, j) => {
+            return this.sigmoid(value);
+        });
+
+        // HIDE => OUTPUT
+        let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsHideForOutput, hideMatrix);
+        outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasHideForOutput);
         outputMatrix.onMap((value, i, j) => {
             return this.sigmoid(value);
         });
 
-        outputMatrix.print();
+        // BACKPROPAGATION
+
+        // OUTPUT => HIDE
+        let expected = this.matrixService.arrayToMatrix(output);
+        let outputError = this.matrixService.subtract(expected, outputMatrix);
+        let hideTranspose = this.matrixService.transpose(hideMatrix);
+        let derivedOutput = outputMatrix.onMap((value, i, j) => {
+            return this.derivedSigmoid(value);
+        });
+
+        let gradient = this.matrixService.hadamard(derivedOutput, outputError);
+        gradient = this.matrixService.scalarMultiply(gradient, neuralNetwork.learningRate);
+
+        //Ajusta Bias
+        neuralNetwork.biasHideForOutput = this.matrixService.sum(neuralNetwork.biasHideForOutput, gradient);
+
+        //Pega os valores de correção dos pesos
+        let weigthsCorrectionHideForOutput = this.matrixService.multiply(gradient, hideTranspose);
+
+        //Aplica as correções nos pesos
+        neuralNetwork.weigthsHideForOutput = this.matrixService.sum(neuralNetwork.weigthsHideForOutput, weigthsCorrectionHideForOutput);
+
+        // HIDE => INPUT
+        let weigthsTransposeHideForOutput = this.matrixService.transpose(neuralNetwork.weigthsHideForOutput);
+        let hideError = this.matrixService.multiply(weigthsTransposeHideForOutput, outputError);
+        let inputTranspose = this.matrixService.transpose(inputMatrix);
+        let derivedHide = hideMatrix.onMap((value, i, j) => {
+            return this.derivedSigmoid(value);
+        });
+        
+        let hideGradient = this.matrixService.hadamard(derivedHide, hideError);
+        hideGradient = this.matrixService.scalarMultiply(hideGradient, neuralNetwork.learningRate);
+
+        //Ajusta Bias
+        neuralNetwork.biasInputForHide = this.matrixService.sum(neuralNetwork.biasInputForHide, hideGradient);
+
+        //Pega os valores de correção dos pesos
+        let weigthsCorrectionInputForHide = this.matrixService.multiply(hideGradient, inputTranspose);
+
+        //Aplica as correções nos pesos
+        neuralNetwork.weigthsInputForHide = this.matrixService.sum(neuralNetwork.weigthsInputForHide, weigthsCorrectionInputForHide);
+    }
+
+    public predict(neuralNetwork: NeuralNetworkService.NeuralNetwork, arr: Array<number>): Array<number> {
+        // INPUT => HIDE
+        let inputMatrix = this.matrixService.arrayToMatrix(arr);
+        let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsInputForHide, inputMatrix);
+
+        hideMatrix = this.matrixService.sum(hideMatrix, neuralNetwork.biasInputForHide);
+        hideMatrix.onMap((value, i, j) => {
+            return this.sigmoid(value);
+        });
+
+        // HIDE => OUTPUT
+        let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsHideForOutput, hideMatrix);
+        outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasHideForOutput);
+        outputMatrix.onMap((value, i, j) => {
+            return this.sigmoid(value);
+        });
+
+        return this.matrixService.matrixToArray(outputMatrix); 
     }
 
     public sigmoid(value: number): number {
         return 1 / (1 + Math.exp(-value));
+    }
+
+    public derivedSigmoid(value: number): number {
+        return value * (1 - value);
     }
 
     public rigid(value: number): number {
@@ -166,27 +248,29 @@ export namespace NeuralNetworkService {
         public inputNodes: number;
         public hideNodes: number;
         public outputNodes: number;
-        public biasForInputHide: MatrixService.Matrix;
-        public biasForHideOutput: MatrixService.Matrix;
-        public weigthsForInputHide: MatrixService.Matrix;
-        public weigthsForHideOutput: MatrixService.Matrix;
+        public learningRate: number;
+        public biasInputForHide: MatrixService.Matrix;
+        public biasHideForOutput: MatrixService.Matrix;
+        public weigthsInputForHide: MatrixService.Matrix;
+        public weigthsHideForOutput: MatrixService.Matrix;
 
         constructor(inputNodes: number, hideNodes: number, outputNodes: number) {
             this.inputNodes = inputNodes;
             this.hideNodes = hideNodes;
             this.outputNodes = outputNodes;
+            this.learningRate = 0.1;
 
-            this.biasForInputHide = new MatrixService.Matrix(this.hideNodes, 1);
-            this.biasForHideOutput = new MatrixService.Matrix(this.outputNodes, 1);
+            this.biasInputForHide = new MatrixService.Matrix(this.hideNodes, 1);
+            this.biasHideForOutput = new MatrixService.Matrix(this.outputNodes, 1);
 
-            this.biasForInputHide.randomize();
-            this.biasForHideOutput.randomize();
+            this.biasInputForHide.randomize();
+            this.biasHideForOutput.randomize();
 
-            this.weigthsForInputHide = new MatrixService.Matrix(this.hideNodes, this.inputNodes);
-            this.weigthsForHideOutput = new MatrixService.Matrix(this.outputNodes, this.hideNodes);
+            this.weigthsInputForHide = new MatrixService.Matrix(this.hideNodes, this.inputNodes);
+            this.weigthsHideForOutput = new MatrixService.Matrix(this.outputNodes, this.hideNodes);
 
-            this.weigthsForInputHide.randomize();
-            this.weigthsForHideOutput.randomize();
+            this.weigthsInputForHide.randomize();
+            this.weigthsHideForOutput.randomize();
         }
     }
 

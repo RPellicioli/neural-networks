@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class MatrixService {
     constructor() { }
 
-
+    //multiplicação dos valores da matriz por posição
     public hadamard(m1: MatrixService.Matrix, m2: MatrixService.Matrix): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.rows, m1.columns);
 
@@ -17,6 +17,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //soma de matrizes
     public sum(m1: MatrixService.Matrix, m2: MatrixService.Matrix): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.rows, m1.columns);
 
@@ -27,6 +28,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //subtração de matrizes
     public subtract(m1: MatrixService.Matrix, m2: MatrixService.Matrix): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.rows, m1.columns);
 
@@ -37,6 +39,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //transposição de matrizes
     public transpose(m1: MatrixService.Matrix): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.columns, m1.rows);
 
@@ -47,6 +50,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //multiplicação escalar
     public scalarMultiply(m1: MatrixService.Matrix, scalar: number): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.rows, m1.columns);
 
@@ -57,6 +61,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //multiplicação de matrizes
     public multiply(m1: MatrixService.Matrix, m2: MatrixService.Matrix): MatrixService.Matrix {
         const matrix = new MatrixService.Matrix(m1.rows, m2.columns);
 
@@ -76,6 +81,7 @@ export class MatrixService {
         return matrix;
     }
 
+    //Conversão de Array para Matriz
     public arrayToMatrix(arr: Array<number>): MatrixService.Matrix {
         let matrix = new MatrixService.Matrix(arr.length, 1);
 
@@ -84,6 +90,17 @@ export class MatrixService {
         })
         
         return matrix;
+    }
+
+    //Conversão de Array para Matriz
+    public matrixToArray(matrix: MatrixService.Matrix): Array<number> {
+        let arr = []
+        
+        matrix.onMap((value, i, j) => {
+            return arr.push(value);
+        })
+
+        return arr;
     }
 
     public onMap(m1: MatrixService.Matrix, m2: MatrixService.Matrix, callback: (value: number, i: number, j: number) => void): MatrixService.Matrix {

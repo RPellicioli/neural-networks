@@ -15,13 +15,27 @@ export class AppComponent implements OnInit {
 
     public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
+        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(2, 3, 1);
+        let dataset = {
+            inputs: [
+                [1, 1],
+                [1, 0],
+                [0, 1],
+                [0, 0]
+            ],
+            outputs: [
+                [0],
+                [1],
+                [1],
+                [0]
+            ]
+        }
 
-        let m1 = new MatrixService.Matrix(1, 2);
-        let m2 = new MatrixService.Matrix(2, 1);
+        // let m1 = new MatrixService.Matrix(1, 2);
+        // let m2 = new MatrixService.Matrix(2, 1);
 
-        let multiply = this.matrixService.multiply(m1, m2);
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(1, 3, 6);
+        // let multiply = this.matrixService.multiply(m1, m2);
 
-        this.neuralNetworkService.feedForward(neuralNetwork, [1, 2]);
+        // this.neuralNetworkService.train(neuralNetwork, [1, 2], [0, 1]);
     }
 }
