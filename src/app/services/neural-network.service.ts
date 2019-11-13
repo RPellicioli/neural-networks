@@ -138,14 +138,14 @@ export class NeuralNetworkService {
         let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsForInputHide, inputMatrix);
 
         hideMatrix = this.matrixService.sum(hideMatrix, neuralNetwork.biasForInputHide);
-        hideMatrix = this.matrixService.onMap(hideMatrix, (value, i, j) => {
+        hideMatrix.onMap((value, i, j) => {
             return this.sigmoid(value);
         });
 
         // HIDE => OUTPUT
         let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsForHideOutput, hideMatrix);
         outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasForHideOutput);
-        outputMatrix = this.matrixService.onMap(outputMatrix, (value, i, j) => {
+        outputMatrix.onMap((value, i, j) => {
             return this.sigmoid(value);
         });
 
