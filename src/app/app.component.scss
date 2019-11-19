@@ -7,6 +7,10 @@
         margin: 24px;
         display: grid;
         grid-template-columns: repeat(6, 1fr);
+
+        &.active{
+            border:2px solid red;
+        }
     
         .cell{
             color: transparent;

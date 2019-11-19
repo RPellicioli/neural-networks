@@ -1,5 +1,5 @@
 <div class="list">
-    <div class="matrix" *ngFor="let matrix of characteres">
+    <div class="matrix" *ngFor="let matrix of characteres" [ngClass]="{ 'active': matrix.active }">
         <div class="cell" [ngClass]="{'active': value == 1}" *ngFor="let value of matrix.bits">
             {{value}}
         </div>

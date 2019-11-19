@@ -151,6 +151,7 @@ export class NeuralNetworkService {
     }
 
     public train(neuralNetwork: NeuralNetworkService.NeuralNetwork, input: Array<number>, output: Array<number>): void {
+        // FEEDFORWARD
         // INPUT => HIDE
         let inputMatrix = this.matrixService.arrayToMatrix(input);
         let hideMatrix = this.matrixService.multiply(neuralNetwork.weigthsInputForHide, inputMatrix);
@@ -167,8 +168,8 @@ export class NeuralNetworkService {
             return this.sigmoid(value);
         });
 
-        // BACKPROPAGATION
 
+        // BACKPROPAGATION
         // OUTPUT => HIDE
         let expected = this.matrixService.arrayToMatrix(output);
         let outputError = this.matrixService.subtract(expected, outputMatrix);
@@ -279,5 +280,6 @@ export namespace NeuralNetworkService {
         public stringBits: string;
         public bits?: Array<number>;
         public code: number;
+        public active?: boolean;
     }
 }

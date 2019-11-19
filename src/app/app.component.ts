@@ -18,7 +18,6 @@ export class AppComponent implements OnInit {
         let neuralNetwork = new NeuralNetworkService.NeuralNetwork(48, 12, 48);
 
         let a = this.matrixService.arrayToMatrix(this.characteres[0].bits);
-        console.log(a);
 
         // let dataset = {
         //     inputs: [
@@ -36,13 +35,16 @@ export class AppComponent implements OnInit {
         // }
 
         let dataset = new Dataset();
+        let indexCharactere = this.getRandomInt(0, this.characteres.length);
 
+        //indexCharactere
         this.characteres[0].bits.forEach(b => {
             dataset.inputs.push(this.getRandomInt(0, 2));
             dataset.outputs.push(b);
         });
 
         let train = true;
+        console.log("Início do treinamento");
 
         while(train){
             for (let i = 0; i < 10000; i++){
@@ -53,16 +55,10 @@ export class AppComponent implements OnInit {
 
             if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98){
                 train = false;
+                this.characteres[0].active = true;
                 console.log("terminou");
             }
         }
-
-        // let m1 = new MatrixService.Matrix(1, 2);
-        // let m2 = new MatrixService.Matrix(2, 1);
-
-        // let multiply = this.matrixService.multiply(m1, m2);
-
-        // this.neuralNetworkService.train(neuralNetwork, [1, 2], [0, 1]);
     }
 
     private getRandomInt(min, max) {
