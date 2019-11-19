@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
 
     public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(48, 12, 48);
+        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(48, 4, 48);
 
         let a = this.matrixService.arrayToMatrix(this.characteres[0].bits);
 
@@ -37,28 +37,47 @@ export class AppComponent implements OnInit {
         let dataset = new Dataset();
         let indexCharactere = this.getRandomInt(0, this.characteres.length);
 
-        //indexCharactere
-        this.characteres[0].bits.forEach(b => {
+        this.characteres[indexCharactere].bits.forEach(b => {
             dataset.inputs.push(this.getRandomInt(0, 2));
             dataset.outputs.push(b);
         });
 
         let train = true;
+        let generationsTotal = 0;
+        let max = 100;
         console.log("Início do treinamento");
 
         while(train){
-            for (let i = 0; i < 10000; i++){
-                let index = this.getRandomInt(0, 4);
+            generationsTotal++;
+            console.log("Número da Geração: " + generationsTotal);
 
+            for (let i = 0; i < max; i++){
                 this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
             }
 
-            if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98){
+            //this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98
+            if(this.verifyResult(neuralNetwork, dataset)){
                 train = false;
-                this.characteres[0].active = true;
+                this.characteres[indexCharactere].active = true;
                 console.log("terminou");
             }
         }
+    }
+
+    private verifyResult(neuralNetwork: NeuralNetworkService.NeuralNetwork, dataset: Dataset): boolean {
+        let count = 0;
+        
+        dataset.outputs.forEach((output, i) => {
+            console.log("RESULTADO PREVISTO: " + this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i], "SAIDA ESPERADA: " + output, "INDEX: " + i);
+
+            if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i] == output){
+                count++;
+            }
+        });
+
+        console.log(count);
+
+        return count == dataset.outputs.length;
     }
 
     private getRandomInt(min, max) {

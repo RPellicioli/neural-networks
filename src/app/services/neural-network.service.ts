@@ -225,7 +225,7 @@ export class NeuralNetworkService {
         let outputMatrix = this.matrixService.multiply(neuralNetwork.weigthsHideForOutput, hideMatrix);
         outputMatrix = this.matrixService.sum(outputMatrix, neuralNetwork.biasHideForOutput);
         outputMatrix.onMap((value, i, j) => {
-            return this.sigmoid(value);
+            return this.rigid(this.sigmoid(value));
         });
 
         return this.matrixService.matrixToArray(outputMatrix); 
@@ -240,7 +240,10 @@ export class NeuralNetworkService {
     }
 
     public rigid(value: number): number {
-        return value < 0.5 ? 0 : 1;
+        if(value < 0.04) return 0;
+        if(value > 0.98) return 1;
+
+        return value;
     }
 }
 
