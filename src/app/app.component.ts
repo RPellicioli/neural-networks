@@ -10,16 +10,27 @@ import { NeuralNetworkService } from './services/neural-network.service';
 export class AppComponent implements OnInit {
     title = 'neural-networks';
     public characteres: Array<NeuralNetworkService.Character>;
+    public inputNodes = 6;
+    public hideNodes = 2;
+    public outputNodes = 48;
+    public learningRate = 0.1;
+    public max = 100;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
     public ngOnInit(): void {
+        this.start();
+    }
+
+    public start(): void {
         this.characteres = this.neuralNetworkService.characteres;
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(6, 2, 48);
-        let train = true;
-        let generationsTotal = 0;
-        let max = 100;
         let indexCharactere = this.getRandomInt(0, this.characteres.length);
+        
+        let generationsTotal = 0;
+        let train = true;
+
+        //Inicializa a rede neural
+        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
         let dataset = new Dataset();
 
         // EXEMPLO XOR - Portas Lógicas
@@ -38,18 +49,20 @@ export class AppComponent implements OnInit {
         //     ]
         // }
 
+        this.characteres.forEach(f => f.active = false);
+
         this.characteres[indexCharactere].bits.forEach(b => {
             dataset.inputs.push(Math.floor(Math.random() * 10));
             dataset.outputs.push(b);
         });
-        
+
         console.log("Início do treinamento");
 
         while(train){
             generationsTotal++;
             console.log("Número da Geração: " + generationsTotal);
 
-            for (let i = 0; i < max; i++){
+            for (let i = 0; i < this.max; i++){
                 this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
             }
 

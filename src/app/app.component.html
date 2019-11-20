@@ -1,3 +1,42 @@
+<section class="header">
+    <div class="common-limiter">
+        <h1 class="logo">
+            Neural Network
+        </h1>
+
+        <div class="inputs">
+            <div class="wrap-input">
+                <label for="inputNodes">Entradas</label>
+                <input type="text" [(ngModel)]="inputNodes" class="common-input" id="inputNodes" />
+            </div>
+
+            <div class="wrap-input">
+                <label for="hideNodes">Ocultas</label>
+                <input type="text" [(ngModel)]="hideNodes" class="common-input" id="hideNodes" />
+            </div>
+
+            <div class="wrap-input">
+                <label for="outputNodes">Saídas</label>
+                <input type="text" [(ngModel)]="outputNodes" disabled class="common-input" id="outputNodes" />
+            </div>
+
+            <div class="wrap-input">
+                <label for="learningRate">Aprendizagem</label>
+                <input type="text" [(ngModel)]="learningRate" class="common-input" id="learningRate" />
+            </div>
+
+            <div class="wrap-input">
+                <label for="max">População</label>
+                <input type="text" [(ngModel)]="max" class="common-input" id="max" />
+            </div>
+
+            <button class="common-button" [disabled]="isLoading" (click)="start()">
+                <span>Start</span>
+            </button>
+        </div>
+    </div>
+</section>
+
 <div class="list">
     <div class="matrix" *ngFor="let matrix of characteres" [ngClass]="{ 'active': matrix.active }">
         <div class="cell" [ngClass]="{'active': value == 1}" *ngFor="let value of matrix.bits">

@@ -278,11 +278,11 @@ export namespace NeuralNetworkService {
         public weigthsInputForHide: MatrixService.Matrix;
         public weigthsHideForOutput: MatrixService.Matrix;
 
-        constructor(inputNodes: number, hideNodes: number, outputNodes: number) {
+        constructor(inputNodes: number, hideNodes: number, outputNodes: number, learningRate: number) {
             this.inputNodes = inputNodes;
             this.hideNodes = hideNodes;
             this.outputNodes = outputNodes;
-            this.learningRate = 0.1;
+            this.learningRate = learningRate;
 
             this.biasInputForHide = new MatrixService.Matrix(this.hideNodes, 1);
             this.biasHideForOutput = new MatrixService.Matrix(this.outputNodes, 1);
