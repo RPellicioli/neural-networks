@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
 
     public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(48, 4, 48);
+        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(6, 4, 48);
 
         let a = this.matrixService.arrayToMatrix(this.characteres[0].bits);
 
@@ -59,7 +59,8 @@ export class AppComponent implements OnInit {
             if(this.verifyResult(neuralNetwork, dataset)){
                 train = false;
                 this.characteres[indexCharactere].active = true;
-                console.log("terminou");
+                
+                console.log("Caracter Encontrado: " + this.characteres[indexCharactere].name, "| Código: " + this.characteres[indexCharactere].code)
             }
         }
     }
@@ -68,14 +69,14 @@ export class AppComponent implements OnInit {
         let count = 0;
         
         dataset.outputs.forEach((output, i) => {
-            console.log("RESULTADO PREVISTO: " + this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i], "SAIDA ESPERADA: " + output, "INDEX: " + i);
+            console.log("RESULTADO PREVISTO: " + this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i], "| SAIDA ESPERADA: " + output, "| INDEX: " + i);
 
             if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i] == output){
                 count++;
             }
         });
 
-        console.log(count);
+        console.log('Número de saídas corretas: ' + count, '\n', '\n');
 
         return count == dataset.outputs.length;
     }
