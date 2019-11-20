@@ -15,10 +15,14 @@ export class AppComponent implements OnInit {
 
     public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(6, 4, 48);
+        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(6, 2, 48);
+        let train = true;
+        let generationsTotal = 0;
+        let max = 100;
+        let indexCharactere = this.getRandomInt(0, this.characteres.length);
+        let dataset = new Dataset();
 
-        let a = this.matrixService.arrayToMatrix(this.characteres[0].bits);
-
+        // EXEMPLO XOR - Portas Lógicas
         // let dataset = {
         //     inputs: [
         //         [1, 1],
@@ -34,17 +38,11 @@ export class AppComponent implements OnInit {
         //     ]
         // }
 
-        let dataset = new Dataset();
-        let indexCharactere = this.getRandomInt(0, this.characteres.length);
-
         this.characteres[indexCharactere].bits.forEach(b => {
-            dataset.inputs.push(this.getRandomInt(0, 2));
+            dataset.inputs.push(Math.floor(Math.random() * 10));
             dataset.outputs.push(b);
         });
-
-        let train = true;
-        let generationsTotal = 0;
-        let max = 100;
+        
         console.log("Início do treinamento");
 
         while(train){
