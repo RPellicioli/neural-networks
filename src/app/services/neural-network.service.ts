@@ -143,6 +143,8 @@ export class NeuralNetworkService {
 
         // stringBits: '111110 100001 100001 100001 111110 100000 100000 100000',
 
+        //random usar caracter valido
+
         this.characteres.forEach(c => {
             c.bits = [];
 
@@ -188,7 +190,6 @@ export class NeuralNetworkService {
             return this.sigmoid(value);
         });
 
-
         // BACKPROPAGATION
         // OUTPUT => HIDE
         let expected = this.matrixService.arrayToMatrix(output);
@@ -231,6 +232,7 @@ export class NeuralNetworkService {
         neuralNetwork.weigthsInputForHide = this.matrixService.sum(neuralNetwork.weigthsInputForHide, weigthsCorrectionInputForHide);
     }
 
+    //test entry
     public predict(neuralNetwork: NeuralNetworkService.NeuralNetwork, arr: Array<number>): Array<number> {
         // INPUT => HIDE
         let inputMatrix = this.matrixService.arrayToMatrix(arr);

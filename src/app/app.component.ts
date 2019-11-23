@@ -10,17 +10,17 @@ import { NeuralNetworkService } from './services/neural-network.service';
 export class AppComponent implements OnInit {
     title = 'neural-networks';
     public characteres: Array<NeuralNetworkService.Character>;
-    public inputNodes = 6;
-    public hideNodes = 2;
-    public outputNodes = 48;
+    public inputNodes = 48;
+    public hideNodes = 24;
+    public outputNodes = 36;
     public learningRate = 0.1;
-    public max = 100;
+    //interações
+    public initial = 500;
+    public max = 1000;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
-    public ngOnInit(): void {
-        this.start();
-    }
+    public ngOnInit(): void {}
 
     public start(): void {
         this.characteres = this.neuralNetworkService.characteres;
@@ -36,10 +36,10 @@ export class AppComponent implements OnInit {
         // EXEMPLO XOR - Portas Lógicas
         // let dataset = {
         //     inputs: [
-        //         [1, 1],
-        //         [1, 0],
-        //         [0, 1],
-        //         [0, 0]
+        //       [0, 0],
+        //       [0, 1],
+        //       [1, 0],
+        //       [1, 1],
         //     ],
         //     outputs: [
         //         [0],
@@ -48,6 +48,8 @@ export class AppComponent implements OnInit {
         //         [0]
         //     ]
         // }
+
+        //saida mais proxima a 1 para setar o certo
 
         this.characteres.forEach(f => f.active = false);
 

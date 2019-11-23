@@ -6,28 +6,8 @@
 
         <div class="inputs">
             <div class="wrap-input">
-                <label for="inputNodes">Entradas</label>
-                <input type="text" [(ngModel)]="inputNodes" class="common-input" id="inputNodes" />
-            </div>
-
-            <div class="wrap-input">
-                <label for="hideNodes">Ocultas</label>
-                <input type="text" [(ngModel)]="hideNodes" class="common-input" id="hideNodes" />
-            </div>
-
-            <div class="wrap-input">
-                <label for="outputNodes">Saídas</label>
-                <input type="text" [(ngModel)]="outputNodes" disabled class="common-input" id="outputNodes" />
-            </div>
-
-            <div class="wrap-input">
-                <label for="learningRate">Aprendizagem</label>
-                <input type="text" [(ngModel)]="learningRate" class="common-input" id="learningRate" />
-            </div>
-
-            <div class="wrap-input">
-                <label for="max">População</label>
-                <input type="text" [(ngModel)]="max" class="common-input" id="max" />
+                <label for="initial">Interações</label>
+                <input type="text" [(ngModel)]="initial" class="common-input" id="max" />
             </div>
 
             <button class="common-button" [disabled]="isLoading" (click)="start()">
