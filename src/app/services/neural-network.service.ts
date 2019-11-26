@@ -6,6 +6,7 @@ import { MatrixService } from './matrix.service';
 })
 export class NeuralNetworkService {
     public characteres: Array<NeuralNetworkService.Character>;
+    public characteresAdditional: Array<NeuralNetworkService.Character>;
 
     constructor(public matrixService: MatrixService) {
         this.characteres = [
@@ -191,20 +192,59 @@ export class NeuralNetworkService {
             }
         ];
 
-        // stringBits: '111110 100001 100001 100001 111110 100000 100000 100000',
+        this.characteresAdditional = [
+            {
+                name: '!',
+                stringBits: '001100001100001100001100001100000000001100001100',
+                code: 33
+            },
+            {
+                name: '+',
+                stringBits: '001100001100001100111111111111001100001100001100',
+                code: 43
+            },
+            {
+                name: '-',
+                stringBits: '000000000000000000111111111111000000000000000000',
+                code: 44
+            },
+            {
+                name: '.',
+                stringBits: '000000000000000000000000000000000000001100001100',
+                code: 46
+            },
+            {
+                name: '=',
+                stringBits: '000000000000111111000000000000111111000000000000',
+                code: 61
+            },
+            {
+                name: '_',
+                stringBits: '000000000000000000000000000000000000000000111111',
+                code: 95
+            }
+        ];
 
-        //random usar caracter valido
+        // stringBits: '111110 100001 100001 100001 111110 100000 100000 100000',
 
         this.characteres.forEach(c => {
             c.bits = [];
 
-            for (let i = 0; i < c.stringBits.length; i++) {
-                c.bits.push(c.stringBits[i] == "0" ? 0 : Math.random());
+            for(let i = 0; i < c.stringBits.length; i++){
+                c.bits.push(Number(c.stringBits[i])); 
+            }
+        });
+
+        this.characteresAdditional.forEach(c => {
+            c.bits = [];
+
+            for(let i = 0; i < c.stringBits.length; i++){
+                c.bits.push(Number(c.stringBits[i])); 
             }
         });
     }
 
-    public createTestEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
+    public createTrainingEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
         var newEntries = new Array<NeuralNetworkService.Character>();
 
         this.createWithoutNoise(newEntries, numberOfEntries);
@@ -212,7 +252,7 @@ export class NeuralNetworkService {
         return newEntries;
     }
 
-    public createTrainingEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
+    public createTestEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
         var newEntries = new Array<NeuralNetworkService.Character>();
 
         this.createWithoutNoise(newEntries, numberOfEntries * 0.34);
@@ -223,8 +263,7 @@ export class NeuralNetworkService {
 
         this.createWithNoise(newEntries, numberOfEntries * 0.20, 12);
 
-        //alterar pelos randoms depois
-        this.createWithNoise(newEntries, numberOfEntries * 0.06, 20);
+        this.createAdditional(newEntries, numberOfEntries * 0.06);
 
         return newEntries;
     }
@@ -247,6 +286,14 @@ export class NeuralNetworkService {
         }
     }
 
+    private createAdditional(entries: Array<NeuralNetworkService.Character>, count: number): void {
+        for (let i = 0; i < count; i++) {
+            var randomEntry = this.characteresAdditional[this.getRandomInt(0, this.characteresAdditional.length)];
+
+            entries.push(randomEntry);
+        }
+    }
+
     private changeRandomValuesFromEntry(entry: NeuralNetworkService.Character, noise: number): void {
         for (let i = 0; i < noise; i++) {
             var index = this.getRandomInt(0, entry.bits.length);
@@ -263,9 +310,71 @@ export class NeuralNetworkService {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
+    public testNetwork(neuralNetwork: NeuralNetworkService.NeuralNetwork, entries: Array<NeuralNetworkService.Character>): Array<NeuralNetworkService.Guess> {
+        var guesses: Array<NeuralNetworkService.Guess> = [];
+
+        for (var i = 0; i < neuralNetwork.outputNodesTotal; i++)
+        {
+            guesses.push(new NeuralNetworkService.Guess(i));
+        }
+
+        entries.forEach((entry) => {
+            let index = this.characteres.findIndex(c => c.code == entry.code);
+
+            if(index > -1){
+                if (this.testEntry(neuralNetwork, entry, guesses[index]))
+                {
+                    guesses[index].rightGuess++;
+                }
+                else
+                {                    
+                    guesses[index].wrongGuess++;
+                }
+            }
+        });
+        
+        console.log(guesses);
+
+        return guesses;
+    }
+
+    private testEntry(neuralNetwork: NeuralNetworkService.NeuralNetwork, entry: NeuralNetworkService.Character, guess: NeuralNetworkService.Guess): boolean {
+        this.resetNodes(neuralNetwork);
+
+        var currentInput = this.characteres.findIndex(c => c.code == entry.code);
+
+        this.populateInputNodes(neuralNetwork, entry.bits);
+
+        this.calculateMiddleLayer(neuralNetwork);
+
+        this.calculateOutputLayer(neuralNetwork);
+
+        var outputLayerOrderedByOut = Object.assign([], neuralNetwork.outputNodes).sort((a, b) => {
+            if (a.out > b.out) {
+                return 1;
+            }
+            if (a.out < b.out) {
+                return -1;
+            }
+            return 0;
+        });
+
+        var indexOfOutputWithHighestOut = neuralNetwork.outputNodes.findIndex(o => o.out == outputLayerOrderedByOut[outputLayerOrderedByOut.length - 1].out);
+
+        if (indexOfOutputWithHighestOut != currentInput){
+            guess.expectedValues.push(indexOfOutputWithHighestOut);
+            console.log("Resultado " + this.characteres[indexOfOutputWithHighestOut].name +", esperado " + this.characteres[currentInput].name +"");
+        }
+
+        neuralNetwork.confusionMatrix.data[indexOfOutputWithHighestOut][currentInput]++;
+
+        return indexOfOutputWithHighestOut == currentInput;
+    }
+
     public trainNetwork(neuralNetwork: NeuralNetworkService.NeuralNetwork, entries: Array<NeuralNetworkService.Character>, loopTimes: number = 1000): void {
         for (var i = 1; i < loopTimes + 1; i++) {
-            // console.log('treinou - ', i);
+            console.log('treinou - ', i);
+            
             entries.forEach((entry, index) => {
                 this.resetNodes(neuralNetwork);
 
@@ -281,9 +390,6 @@ export class NeuralNetworkService {
 
                 this.ajustNetworkWeights(neuralNetwork);
             });
-
-            console.log(neuralNetwork.outputNodes[0].value, " - value");
-            console.log(neuralNetwork.outputNodes[0].error, " - error");
         }
     }
 
@@ -524,7 +630,7 @@ export namespace NeuralNetworkService {
             this.trueNegative = [];
             this.falsePositive = [];
             this.falseNegative = [];
-            this.confusionMatrix = new MatrixService.Matrix(this.outputNodesTotal, this.outputNodesTotal);
+            this.confusionMatrix = new MatrixService.Matrix(this.outputNodesTotal, this.outputNodesTotal, true);
         }
     }
 
@@ -555,5 +661,58 @@ export namespace NeuralNetworkService {
                 this.error = 0;
             }
         }
+    }
+
+    export class Guess
+    {
+        public inputValue: InputEnum;
+        public rightGuess: number = 0;
+        public wrongGuess: number = 0;
+        public expectedValues: Array<InputEnum>;
+
+        constructor(inputValue: InputEnum){
+            this.inputValue = inputValue;
+            this.expectedValues = [];
+        }
+    }
+
+    export enum InputEnum
+    {
+        Number0,
+        Number1,
+        Number2,
+        Number3,
+        Number4,
+        Number5,
+        Number6,
+        Number7,
+        Number8,
+        Number9,
+        LetterA,
+        LetterB,
+        LetterC,
+        LetterD,
+        LetterE,
+        LetterF,
+        LetterG,
+        LetterH,
+        LetterI,
+        LetterJ,
+        LetterK,
+        LetterL,
+        LetterM,
+        LetterN,
+        LetterO,
+        LetterP,
+        LetterQ,
+        LetterR,
+        LetterS,
+        LetterT,
+        LetterU,
+        LetterV,
+        LetterW,
+        LetterX,
+        LetterY,
+        LetterZ,
     }
 }

@@ -34,9 +34,10 @@ export class AppComponent implements OnInit {
         let datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
         let datasetTest = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
 
-        console.log(neuralNetwork.outputNodes[0]);
-
         this.neuralNetworkService.trainNetwork(neuralNetwork, datasetTrain);
+        this.neuralNetworkService.testNetwork(neuralNetwork, datasetTest);
+
+        console.log(neuralNetwork.confusionMatrix);
 
         // EXEMPLO XOR - Portas Lógicas
         // let dataset = {
