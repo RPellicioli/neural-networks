@@ -37,12 +37,15 @@ export class AppComponent implements OnInit {
 
         this.isStart = true;
 
+        console.log(this.datasetTrain);
         console.log(this.datasetTest);
     }
 
     public start(): void {
         this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
         this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
+
+        console.log(this.neuralNetwork.confusionMatrix);
     }
 
     private getRandomInt(min, max) {

@@ -299,7 +299,7 @@ export class NeuralNetworkService {
             var index = this.getRandomInt(0, entry.bits.length);
             var element = entry.bits[index];
 
-            element = element == 1 ? 0 : 1;
+            element = element > 0 ? 0 : Math.random();
             entry.bits[index] = element;
         }
     }
