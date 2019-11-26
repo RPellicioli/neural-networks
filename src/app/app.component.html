@@ -10,7 +10,11 @@
                 <input type="text" [(ngModel)]="numberOfEntries" class="common-input" id="max" />
             </div>
 
-            <button class="common-button" [disabled]="isLoading" (click)="start()">
+            <button class="common-button" [disabled]="isLoading" (click)="createDataset()">
+                <span>Criar</span>
+            </button>
+
+            <button class="common-button" [disabled]="!isStart" (click)="start()">
                 <span>Start</span>
             </button>
         </div>

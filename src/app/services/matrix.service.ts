@@ -135,7 +135,7 @@ export namespace MatrixService {
                         
                     }
                     else{
-                        arr.push(Math.floor(Math.random() * 10));
+                        arr.push(Math.random());
                     }
                 }
 
@@ -149,7 +149,7 @@ export namespace MatrixService {
 
         public randomize(): void {
             this.onMap((value, i, j) => {
-                return Math.random() * 2 - 1;
+                return Math.random();
             })
         }
 

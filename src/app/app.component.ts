@@ -17,87 +17,32 @@ export class AppComponent implements OnInit {
     public numberOfEntries = 500;
     public max = 1000;
 
+    public isStart: boolean;
+
+    public neuralNetwork: NeuralNetworkService.NeuralNetwork;
+    public datasetTrain: Array<NeuralNetworkService.Character>;
+    public datasetTest: Array<NeuralNetworkService.Character>;
+
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
     public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
     }
 
-    public start(): void {
-        let indexCharactere = this.getRandomInt(0, this.characteres.length);
-        
-        let generationsTotal = 0;
-        let train = true;
-
+    public createDataset(): void {
         //Inicializa a rede neural
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
-        let datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
-        let datasetTest = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
+        this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
+        this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
+        this.datasetTest = this.neuralNetworkService.createTestEntries(this.numberOfEntries);
 
-        this.neuralNetworkService.trainNetwork(neuralNetwork, datasetTrain);
-        //this.neuralNetworkService.testNetwork(neuralNetwork, datasetTest);
+        this.isStart = true;
 
-        console.log(neuralNetwork.confusionMatrix);
-
-        // EXEMPLO XOR - Portas Lógicas
-        // let dataset = {
-        //     inputs: [
-        //       [0, 0],
-        //       [0, 1],
-        //       [1, 0],
-        //       [1, 1],
-        //     ],
-        //     outputs: [
-        //         [0],
-        //         [1],
-        //         [1],
-        //         [0]
-        //     ]
-        // }
-
-        //saida mais proxima a 1 para setar o certo
-
-        // this.characteres.forEach(f => f.active = false);
-
-        // this.characteres[indexCharactere].bits.forEach(b => {
-        //     dataset.inputs.push(Math.floor(Math.random() * 10));
-        //     dataset.outputs.push(b);
-        // });
-
-        // console.log("Início do treinamento");
-
-        // while(train){
-        //     generationsTotal++;
-        //     console.log("Número da Geração: " + generationsTotal);
-
-        //     for (let i = 0; i < this.max; i++){
-        //         this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
-        //     }
-
-        //     //this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98
-        //     if(this.verifyResult(neuralNetwork, dataset)){
-        //         train = false;
-        //         this.characteres[indexCharactere].active = true;
-                
-        //         console.log("Caracter Encontrado: " + this.characteres[indexCharactere].name, "| Código: " + this.characteres[indexCharactere].code)
-        //     }
-        // }
+        console.log(this.datasetTest);
     }
 
-    private verifyResult(neuralNetwork: NeuralNetworkService.NeuralNetwork, dataset: Dataset): boolean {
-        let count = 0;
-        
-        dataset.outputs.forEach((output, i) => {
-            console.log("RESULTADO PREVISTO: " + this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i], "| SAIDA ESPERADA: " + output, "| INDEX: " + i);
-
-            if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i] == output){
-                count++;
-            }
-        });
-
-        console.log('Número de saídas corretas: ' + count, '\n', '\n');
-
-        return count == dataset.outputs.length;
+    public start(): void {
+        this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
+        this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
     }
 
     private getRandomInt(min, max) {

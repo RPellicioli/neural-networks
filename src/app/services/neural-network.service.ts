@@ -359,8 +359,6 @@ export class NeuralNetworkService {
             return 0;
         });
 
-        debugger
-
         var indexOfOutputWithHighestOut = neuralNetwork.outputNodes.findIndex(o => o.out == outputLayerOrderedByOut[outputLayerOrderedByOut.length - 1].out);
 
         if (indexOfOutputWithHighestOut != currentInput){
@@ -375,10 +373,11 @@ export class NeuralNetworkService {
 
     public trainNetwork(neuralNetwork: NeuralNetworkService.NeuralNetwork, entries: Array<NeuralNetworkService.Character>, loopTimes: number = 1000): void {
         for (var i = 1; i < loopTimes + 1; i++) {
-            console.log('treinou - ', i);
+            console.log('Loop - ', i);
             
-            entries.forEach((entry, index) => {
-                debugger
+            entries.forEach((entry) => {
+                let index = this.characteres.findIndex(c => c.code == entry.code);
+
                 this.resetNodes(neuralNetwork);
 
                 this.populateInputNodes(neuralNetwork, entry.bits);
@@ -393,6 +392,19 @@ export class NeuralNetworkService {
 
                 this.ajustNetworkWeights(neuralNetwork);
             });
+
+            if (i % 20 == 0){
+                let output, error, value;
+                output = error = value = 0;
+                for (let j = 0; j < neuralNetwork.outputNodesTotal; j++)
+                {
+                    output += neuralNetwork.outputNodes[j].out;
+                    error += neuralNetwork.outputNodes[j].error;
+                    value += neuralNetwork.outputNodes[j].value;
+                }
+
+                console.log("OUT: " + output / neuralNetwork.outputNodesTotal, "ERROR: " + error / neuralNetwork.outputNodesTotal, "VALUE: " + value / neuralNetwork.outputNodesTotal);
+            }
         }
     }
 
