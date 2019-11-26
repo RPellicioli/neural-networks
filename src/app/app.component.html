@@ -6,8 +6,8 @@
 
         <div class="inputs">
             <div class="wrap-input">
-                <label for="initial">Interações</label>
-                <input type="text" [(ngModel)]="initial" class="common-input" id="max" />
+                <label for="numberOfEntries">Interações</label>
+                <input type="text" [(ngModel)]="numberOfEntries" class="common-input" id="max" />
             </div>
 
             <button class="common-button" [disabled]="isLoading" (click)="start()">
@@ -16,11 +16,3 @@
         </div>
     </div>
 </section>
-
-<div class="list">
-    <div class="matrix" *ngFor="let matrix of characteres" [ngClass]="{ 'active': matrix.active }">
-        <div class="cell" [ngClass]="{'active': value == 1}" *ngFor="let value of matrix.bits">
-            {{value}}
-        </div>
-    </div>
-</div>

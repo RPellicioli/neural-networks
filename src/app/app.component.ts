@@ -14,16 +14,16 @@ export class AppComponent implements OnInit {
     public hideNodes = 24;
     public outputNodes = 36;
     public learningRate = 0.1;
-    //interações
-    public initial = 500;
+    public numberOfEntries = 500;
     public max = 1000;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
-    public ngOnInit(): void {}
+    public ngOnInit(): void {
+        this.characteres = this.neuralNetworkService.characteres;
+    }
 
     public start(): void {
-        this.characteres = this.neuralNetworkService.characteres;
         let indexCharactere = this.getRandomInt(0, this.characteres.length);
         
         let generationsTotal = 0;
@@ -31,7 +31,12 @@ export class AppComponent implements OnInit {
 
         //Inicializa a rede neural
         let neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
-        let dataset = new Dataset();
+        let datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
+        let datasetTest = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
+
+        console.log(neuralNetwork.outputNodes[0]);
+
+        this.neuralNetworkService.trainNetwork(neuralNetwork, datasetTrain);
 
         // EXEMPLO XOR - Portas Lógicas
         // let dataset = {
@@ -51,31 +56,31 @@ export class AppComponent implements OnInit {
 
         //saida mais proxima a 1 para setar o certo
 
-        this.characteres.forEach(f => f.active = false);
+        // this.characteres.forEach(f => f.active = false);
 
-        this.characteres[indexCharactere].bits.forEach(b => {
-            dataset.inputs.push(Math.floor(Math.random() * 10));
-            dataset.outputs.push(b);
-        });
+        // this.characteres[indexCharactere].bits.forEach(b => {
+        //     dataset.inputs.push(Math.floor(Math.random() * 10));
+        //     dataset.outputs.push(b);
+        // });
 
-        console.log("Início do treinamento");
+        // console.log("Início do treinamento");
 
-        while(train){
-            generationsTotal++;
-            console.log("Número da Geração: " + generationsTotal);
+        // while(train){
+        //     generationsTotal++;
+        //     console.log("Número da Geração: " + generationsTotal);
 
-            for (let i = 0; i < this.max; i++){
-                this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
-            }
+        //     for (let i = 0; i < this.max; i++){
+        //         this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
+        //     }
 
-            //this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98
-            if(this.verifyResult(neuralNetwork, dataset)){
-                train = false;
-                this.characteres[indexCharactere].active = true;
+        //     //this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98
+        //     if(this.verifyResult(neuralNetwork, dataset)){
+        //         train = false;
+        //         this.characteres[indexCharactere].active = true;
                 
-                console.log("Caracter Encontrado: " + this.characteres[indexCharactere].name, "| Código: " + this.characteres[indexCharactere].code)
-            }
-        }
+        //         console.log("Caracter Encontrado: " + this.characteres[indexCharactere].name, "| Código: " + this.characteres[indexCharactere].code)
+        //     }
+        // }
     }
 
     private verifyResult(neuralNetwork: NeuralNetworkService.NeuralNetwork, dataset: Dataset): boolean {
