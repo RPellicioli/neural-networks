@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
         let datasetTest = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
 
         this.neuralNetworkService.trainNetwork(neuralNetwork, datasetTrain);
-        this.neuralNetworkService.testNetwork(neuralNetwork, datasetTest);
+        //this.neuralNetworkService.testNetwork(neuralNetwork, datasetTest);
 
         console.log(neuralNetwork.confusionMatrix);
 

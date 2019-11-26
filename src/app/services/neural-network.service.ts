@@ -231,7 +231,7 @@ export class NeuralNetworkService {
             c.bits = [];
 
             for(let i = 0; i < c.stringBits.length; i++){
-                c.bits.push(Number(c.stringBits[i])); 
+                c.bits.push(c.stringBits[i] == '1' ? Math.random() : 0);
             }
         });
 
@@ -239,7 +239,7 @@ export class NeuralNetworkService {
             c.bits = [];
 
             for(let i = 0; i < c.stringBits.length; i++){
-                c.bits.push(Number(c.stringBits[i])); 
+                c.bits.push(c.stringBits[i] == '1' ? Math.random() : 0);
             }
         });
     }
@@ -359,6 +359,8 @@ export class NeuralNetworkService {
             return 0;
         });
 
+        debugger
+
         var indexOfOutputWithHighestOut = neuralNetwork.outputNodes.findIndex(o => o.out == outputLayerOrderedByOut[outputLayerOrderedByOut.length - 1].out);
 
         if (indexOfOutputWithHighestOut != currentInput){
@@ -376,6 +378,7 @@ export class NeuralNetworkService {
             console.log('treinou - ', i);
             
             entries.forEach((entry, index) => {
+                debugger
                 this.resetNodes(neuralNetwork);
 
                 this.populateInputNodes(neuralNetwork, entry.bits);
