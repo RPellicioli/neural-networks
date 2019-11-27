@@ -25,6 +25,17 @@
     {{data.name}}
 </section> -->
 
+<!-- <div class="list">
+    <div class="letter-test" *ngFor="let matrix of datasetTrain">
+        {{matrix.name}}
+
+        <div class="matrix" [ngClass]="{ 'active': matrix.active }">
+            <div class="cell" [ngClass]="{'active': value > 0}" *ngFor="let value of matrix.bits">
+            </div>
+        </div>
+    </div>
+</div> -->
+
 <div class="list">
     <div class="letter-test" *ngFor="let matrix of datasetTest">
         {{matrix.name}}

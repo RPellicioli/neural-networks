@@ -245,11 +245,11 @@ export class NeuralNetworkService {
     }
 
     public createTrainingEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
-        var newEntries = new Array<NeuralNetworkService.Character>();
+        var trainEntries = new Array<NeuralNetworkService.Character>();
 
-        this.createWithoutNoise(newEntries, numberOfEntries);
+        this.createWithoutNoise(trainEntries, numberOfEntries);
 
-        return newEntries;
+        return trainEntries;
     }
 
     public createTestEntries(numberOfEntries: number): Array<NeuralNetworkService.Character> {
@@ -263,14 +263,26 @@ export class NeuralNetworkService {
 
         this.createWithNoise(newEntries, numberOfEntries * 0.20, 12);
 
-        //this.createAdditional(newEntries, numberOfEntries * 0.06);
+        this.createAdditional(newEntries, numberOfEntries * 0.06);
 
         return newEntries;
+    }
+    
+    private createRandomEntry(): NeuralNetworkService.Character {
+        let index = this.getRandomInt(0, this.characteres.length);
+
+        var randomEntry = new NeuralNetworkService.Character();
+        randomEntry.name = this.characteres[index].name;
+        randomEntry.code = this.characteres[index].code;
+        randomEntry.stringBits = this.characteres[index].stringBits;
+        randomEntry.bits = this.characteres[index].bits.slice(0, this.characteres[index].bits.length);
+        
+        return randomEntry;
     }
 
     private createWithoutNoise(entries: Array<NeuralNetworkService.Character>, count: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = Object.assign([], this.characteres[this.getRandomInt(0, this.characteres.length)]);
+            var randomEntry = this.createRandomEntry();
 
             entries.push(randomEntry);
         }
@@ -278,7 +290,7 @@ export class NeuralNetworkService {
 
     private createWithNoise(entries: Array<NeuralNetworkService.Character>, count: number, noise: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = Object.assign([], this.characteres[this.getRandomInt(0, this.characteres.length)]);
+            var randomEntry = this.createRandomEntry();
 
             this.changeRandomValuesFromEntry(randomEntry, noise);
 
@@ -288,7 +300,13 @@ export class NeuralNetworkService {
 
     private createAdditional(entries: Array<NeuralNetworkService.Character>, count: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = Object.assign([], this.characteresAdditional[this.getRandomInt(0, this.characteresAdditional.length)]);
+            let index = this.getRandomInt(0, this.characteresAdditional.length);
+
+            var randomEntry = new NeuralNetworkService.Character();
+            randomEntry.name = this.characteresAdditional[index].name;
+            randomEntry.code = this.characteresAdditional[index].code;
+            randomEntry.stringBits = this.characteresAdditional[index].stringBits;
+            randomEntry.bits = this.characteresAdditional[index].bits.slice(0, this.characteresAdditional[index].bits.length);
 
             entries.push(randomEntry);
         }
