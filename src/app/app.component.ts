@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
         //Inicializa a rede neural
         this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
         this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
-        this.datasetTest = this.neuralNetworkService.createTestEntries(this.numberOfEntries);
+        this.datasetTest = this.neuralNetworkService.createTestEntries(10);
 
         this.isStart = true;
 

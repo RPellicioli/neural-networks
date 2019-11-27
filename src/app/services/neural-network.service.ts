@@ -297,10 +297,7 @@ export class NeuralNetworkService {
     private changeRandomValuesFromEntry(entry: NeuralNetworkService.Character, noise: number): void {
         for (let i = 0; i < noise; i++) {
             var index = this.getRandomInt(0, entry.bits.length);
-            var element = entry.bits[index];
-
-            element = element > 0 ? 0 : Math.random();
-            entry.bits[index] = element;
+            entry.bits[index] = entry.bits[index] > 0 ? 0 : Math.random();
         }
     }
 
@@ -318,19 +315,8 @@ export class NeuralNetworkService {
             guesses.push(new NeuralNetworkService.Guess(i));
         }
 
-        entries.forEach((entry) => {
-            let index = this.characteres.findIndex(c => c.code == entry.code);
-
-            if(index > -1){
-                if (this.testEntry(neuralNetwork, entry, guesses[index]))
-                {
-                    guesses[index].rightGuess++;
-                }
-                else
-                {                    
-                    guesses[index].wrongGuess++;
-                }
-            }
+        entries.forEach((entry, i) => {
+            this.testEntry(neuralNetwork, entry, guesses);
         });
         
         console.log(guesses);
@@ -338,7 +324,7 @@ export class NeuralNetworkService {
         return guesses;
     }
 
-    private testEntry(neuralNetwork: NeuralNetworkService.NeuralNetwork, entry: NeuralNetworkService.Character, guess: NeuralNetworkService.Guess): boolean {
+    private testEntry(neuralNetwork: NeuralNetworkService.NeuralNetwork, entry: NeuralNetworkService.Character, guesses: Array<NeuralNetworkService.Guess>): void {
         this.resetNodes(neuralNetwork);
 
         var currentInput = this.characteres.findIndex(c => c.code == entry.code);
@@ -361,14 +347,35 @@ export class NeuralNetworkService {
 
         var indexOfOutputWithHighestOut = neuralNetwork.outputNodes.findIndex(o => o.out == outputLayerOrderedByOut[outputLayerOrderedByOut.length - 1].out);
 
-        if (indexOfOutputWithHighestOut != currentInput){
-            guess.expectedValues.push(indexOfOutputWithHighestOut);
-            console.log("Resultado " + this.characteres[indexOfOutputWithHighestOut].name +", esperado " + this.characteres[currentInput].name +"");
+        if(currentInput < 0){
+            guesses[indexOfOutputWithHighestOut].expectedValues.push(currentInput);
+            let additionalIndex = this.characteresAdditional.findIndex(c => c.code == entry.code);
+
+            console.log("Resultado " + this.characteres[indexOfOutputWithHighestOut].name +", esperado " + this.characteresAdditional[additionalIndex].name);
+        }
+        else if (indexOfOutputWithHighestOut != currentInput){
+            guesses[currentInput].expectedValues.push(indexOfOutputWithHighestOut);
+            console.log("Resultado " + this.characteres[indexOfOutputWithHighestOut].name +", esperado " + this.characteres[currentInput].name);
         }
 
-        neuralNetwork.confusionMatrix.data[indexOfOutputWithHighestOut][currentInput]++;
+        if(currentInput < 0){
+            var i = indexOfOutputWithHighestOut == 0 ? 1 : 0
+            
+            neuralNetwork.confusionMatrix.data[indexOfOutputWithHighestOut][i]++;
+            guesses[indexOfOutputWithHighestOut].wrongGuess++;
+        }
+        else{
+            neuralNetwork.confusionMatrix.data[indexOfOutputWithHighestOut][currentInput]++;
 
-        return indexOfOutputWithHighestOut == currentInput;
+            if (indexOfOutputWithHighestOut == currentInput)
+            {
+                guesses[currentInput].rightGuess++;
+            }
+            else
+            {                    
+                guesses[currentInput].wrongGuess++;
+            }
+        }  
     }
 
     public trainNetwork(neuralNetwork: NeuralNetworkService.NeuralNetwork, entries: Array<NeuralNetworkService.Character>, loopTimes: number = 1000): void {

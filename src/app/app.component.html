@@ -10,13 +10,52 @@
                 <input type="text" [(ngModel)]="numberOfEntries" class="common-input" id="max" />
             </div>
 
-            <button class="common-button" [disabled]="isLoading" (click)="createDataset()">
+            <button class="common-button orange" [disabled]="isLoading" (click)="createDataset()">
                 <span>Criar</span>
             </button>
 
-            <button class="common-button" [disabled]="!isStart" (click)="start()">
+            <button class="common-button green" [disabled]="!isStart" (click)="start()">
                 <span>Start</span>
             </button>
         </div>
     </div>
+</section>
+
+<!-- <section class="dataSet" >
+    {{data.name}}
+</section> -->
+
+<div class="list">
+    <div class="letter-test" *ngFor="let matrix of datasetTest">
+        {{matrix.name}}
+
+        <div class="matrix" [ngClass]="{ 'active': matrix.active }">
+            <div class="cell" [ngClass]="{'active': value > 0}" *ngFor="let value of matrix.bits">
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="matrix-container">
+    <ng-container *ngIf="neuralNetwork">
+        <div class="row">
+            <div class="cell letter" *ngFor="let character of characteres; let i = index">
+                {{character.name}}
+            </div>
+        </div>
+        <div class="matrix">
+            <div class="row" *ngFor="let a of characteres; let i = index">
+                <div class="cell" [ngClass]="{'bold': neuralNetwork.confusionMatrix.data[i][j] > 0}"
+                    *ngFor="let b of characteres; let j = index">
+                    {{neuralNetwork.confusionMatrix.data[i][j]}}
+                </div>
+            </div>
+        </div>
+
+        <div class="left">
+            <div class="cell letter" *ngFor="let character of characteres; let i = index">
+                {{character.name}}
+            </div>
+        </div>
+    </ng-container>
 </section>
