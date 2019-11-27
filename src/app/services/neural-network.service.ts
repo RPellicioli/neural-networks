@@ -263,14 +263,14 @@ export class NeuralNetworkService {
 
         this.createWithNoise(newEntries, numberOfEntries * 0.20, 12);
 
-        this.createAdditional(newEntries, numberOfEntries * 0.06);
+        //this.createAdditional(newEntries, numberOfEntries * 0.06);
 
         return newEntries;
     }
 
     private createWithoutNoise(entries: Array<NeuralNetworkService.Character>, count: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = this.characteres[this.getRandomInt(0, this.characteres.length)];
+            var randomEntry = Object.assign([], this.characteres[this.getRandomInt(0, this.characteres.length)]);
 
             entries.push(randomEntry);
         }
@@ -278,7 +278,7 @@ export class NeuralNetworkService {
 
     private createWithNoise(entries: Array<NeuralNetworkService.Character>, count: number, noise: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = this.characteres[this.getRandomInt(0, this.characteres.length)];
+            var randomEntry = Object.assign([], this.characteres[this.getRandomInt(0, this.characteres.length)]);
 
             this.changeRandomValuesFromEntry(randomEntry, noise);
 
@@ -288,7 +288,7 @@ export class NeuralNetworkService {
 
     private createAdditional(entries: Array<NeuralNetworkService.Character>, count: number): void {
         for (let i = 0; i < count; i++) {
-            var randomEntry = this.characteresAdditional[this.getRandomInt(0, this.characteresAdditional.length)];
+            var randomEntry = Object.assign([], this.characteresAdditional[this.getRandomInt(0, this.characteresAdditional.length)]);
 
             entries.push(randomEntry);
         }

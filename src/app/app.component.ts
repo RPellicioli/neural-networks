@@ -35,6 +35,8 @@ export class AppComponent implements OnInit {
         this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
         this.datasetTest = this.neuralNetworkService.createTestEntries(10);
 
+        this.datasetTest[8].bits = Object.assign([], this.datasetTest[4].bits);
+
         this.isStart = true;
 
         console.log(this.datasetTrain);
