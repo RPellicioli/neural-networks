@@ -339,6 +339,8 @@ export class NeuralNetworkService {
         
         console.log(guesses);
 
+        this.calculateMetrics(neuralNetwork);
+
         return guesses;
     }
 
@@ -516,6 +518,41 @@ export class NeuralNetworkService {
         }
     }
 
+    public calculateMetrics(neuralNetwork: NeuralNetworkService.NeuralNetwork): void {
+        debugger
+        for (let i = 0; i < neuralNetwork.outputNodesTotal; i++)
+        {
+            for (let j = 0; j < neuralNetwork.outputNodesTotal; j++)
+            {
+                if (i == j)
+                {
+                    neuralNetwork.truePositive += neuralNetwork.confusionMatrix.data[i][j];
+                    for (let k = 0; k < neuralNetwork.outputNodesTotal; k++)
+                    {
+                        if (k != i) { 
+                            neuralNetwork.trueNegative += neuralNetwork.confusionMatrix.data[i][j];
+                        }
+                    }
+                }
+                else
+                {
+                    neuralNetwork.falseNegative += neuralNetwork.confusionMatrix.data[i][j];
+                    neuralNetwork.falsePositive += neuralNetwork.confusionMatrix.data[j][i];
+                }
+            }
+        }
+
+        let acuracy = (neuralNetwork.truePositive + neuralNetwork.trueNegative) / (neuralNetwork.truePositive + neuralNetwork.falsePositive + neuralNetwork.trueNegative + neuralNetwork.falseNegative);
+
+        let error = 1 - acuracy;
+        let recall = neuralNetwork.truePositive / (neuralNetwork.truePositive + neuralNetwork.falseNegative);
+        let precision = neuralNetwork.truePositive / (neuralNetwork.truePositive + neuralNetwork.falsePositive);
+        let especify = neuralNetwork.trueNegative / (neuralNetwork.trueNegative + neuralNetwork.falsePositive);
+        let fmeasure = 2 * (recall * precision) / (recall + precision);
+
+        console.log(`"accuracy: ${acuracy} error: ${error} recall: ${recall} precision: ${precision} especify: ${especify} fmeasure: ${fmeasure}"`);
+    }
+
     public train(neuralNetwork: NeuralNetworkService.NeuralNetwork, input: Array<number>, output: Array<number>): void {
         // FEEDFORWARD
         // INPUT => HIDE
@@ -626,10 +663,10 @@ export namespace NeuralNetworkService {
         public biasHideForOutput: MatrixService.Matrix;
         public weigthsInputForHide: MatrixService.Matrix;
         public weigthsHideForOutput: MatrixService.Matrix;
-        public truePositive: Array<number>;
-        public trueNegative: Array<number>;
-        public falsePositive: Array<number>;
-        public falseNegative: Array<number>;
+        public truePositive: number;
+        public trueNegative: number;
+        public falsePositive: number;
+        public falseNegative: number;
         public confusionMatrix: MatrixService.Matrix;
 
         constructor(inputNodesTotal: number, hideNodesTotal: number, outputNodesTotal: number, learningRate: number) {
@@ -666,10 +703,10 @@ export namespace NeuralNetworkService {
             this.weigthsInputForHide.randomize();
             this.weigthsHideForOutput.randomize();
 
-            this.truePositive = [];
-            this.trueNegative = [];
-            this.falsePositive = [];
-            this.falseNegative = [];
+            this.truePositive = 0;
+            this.trueNegative = 0;
+            this.falsePositive = 0;
+            this.falseNegative = 0;
             this.confusionMatrix = new MatrixService.Matrix(this.outputNodesTotal, this.outputNodesTotal, true);
         }
     }
