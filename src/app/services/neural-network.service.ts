@@ -379,7 +379,6 @@ export class NeuralNetworkService {
         if(currentInput < 0){
             var i = indexOfOutputWithHighestOut == 0 ? 1 : 0
             
-            neuralNetwork.confusionMatrix.data[indexOfOutputWithHighestOut][i]++;
             guesses[indexOfOutputWithHighestOut].wrongGuess++;
         }
         else{

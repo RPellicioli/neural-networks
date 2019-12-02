@@ -6,8 +6,13 @@
 
         <div class="inputs">
             <div class="wrap-input">
-                <label for="numberOfEntries">Dataset</label>
+                <label for="numberOfEntries">Dataset Treino</label>
                 <input type="text" [(ngModel)]="numberOfEntries" class="common-input" id="max" />
+            </div>
+
+            <div class="wrap-input">
+                <label for="numberOfEntries">Dataset Teste</label>
+                <input type="text" [(ngModel)]="numberOfEntrieTest" class="common-input" id="max" />
             </div>
 
             <button class="common-button orange" [disabled]="isLoading" (click)="createDataset()">
@@ -15,7 +20,11 @@
             </button>
 
             <button class="common-button green" [disabled]="!isStart" (click)="start()">
-                <span>Start</span>
+                <span>Treinar</span>
+            </button>
+
+            <button class="common-button green" [disabled]="!isTest" (click)="test()">
+                <span>Testar</span>
             </button>
         </div>
     </div>
@@ -24,6 +33,7 @@
 <!-- <section class="dataSet" >
     {{data.name}}
 </section> -->
+
 
 <!-- <div class="list">
     <div class="letter-test" *ngFor="let matrix of datasetTrain">

@@ -15,9 +15,11 @@ export class AppComponent implements OnInit {
     public outputNodes = 36;
     public learningRate = 0.1;
     public numberOfEntries = 500;
+    public numberOfEntrieTest = 10;
     public max = 1000;
 
     public isStart: boolean;
+    public isTest: boolean;
 
     public neuralNetwork: NeuralNetworkService.NeuralNetwork;
     public datasetTrain: Array<NeuralNetworkService.Character>;
@@ -33,19 +35,19 @@ export class AppComponent implements OnInit {
         //Inicializa a rede neural
         this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
         this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
-        this.datasetTest = this.neuralNetworkService.createTestEntries(10);
+        this.datasetTest = this.neuralNetworkService.createTestEntries(this.numberOfEntrieTest);
 
         this.isStart = true;
-
-        console.log(this.datasetTrain);
-        console.log(this.datasetTest);
     }
 
     public start(): void {
         this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
-        this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
 
-        console.log(this.neuralNetwork.confusionMatrix);
+        this.isTest = true;
+    }
+
+    public test(): void {
+        this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
     }
 
     private getRandomInt(min, max) {
