@@ -122,15 +122,21 @@ export namespace MatrixService {
         public columns: number;
         public data: Array<any> = [];
 
-        constructor(rows: number, columns: number) {
+        constructor(rows: number, columns: number, emptyData?: boolean) {
             this.rows = rows;
             this.columns = columns;
-
+            
             for (let i = 0; i < rows; i++) {
                 let arr = [];
 
                 for (let j = 0; j < columns; j++) {
-                    arr.push(Math.floor(Math.random() * 10));
+                    if(emptyData){
+                        arr.push(0);
+                        
+                    }
+                    else{
+                        arr.push(Math.random());
+                    }
                 }
 
                 this.data.push(arr);
@@ -143,7 +149,7 @@ export namespace MatrixService {
 
         public randomize(): void {
             this.onMap((value, i, j) => {
-                return Math.random() * 2 - 1;
+                return Math.random();
             })
         }
 

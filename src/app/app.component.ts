@@ -14,90 +14,125 @@ export class AppComponent implements OnInit {
     public hideNodes = 24;
     public outputNodes = 36;
     public learningRate = 0.1;
-    //interações
-    public initial = 500;
+    public numberOfEntries = 500;
     public max = 1000;
+
+    public isStart: boolean;
+
+    public neuralNetwork: NeuralNetworkService.NeuralNetwork;
+    public datasetTrain: Array<NeuralNetworkService.Character>;
+    public datasetTest: Array<NeuralNetworkService.Character>;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
-    public ngOnInit(): void {}
-
-    public start(): void {
+    public ngOnInit(): void {
         this.characteres = this.neuralNetworkService.characteres;
-        let indexCharactere = this.getRandomInt(0, this.characteres.length);
-        
-        let generationsTotal = 0;
-        let train = true;
-
-        //Inicializa a rede neural
-        let neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
-        let dataset = new Dataset();
-
-        // EXEMPLO XOR - Portas Lógicas
-        // let dataset = {
-        //     inputs: [
-        //       [0, 0],
-        //       [0, 1],
-        //       [1, 0],
-        //       [1, 1],
-        //     ],
-        //     outputs: [
-        //         [0],
-        //         [1],
-        //         [1],
-        //         [0]
-        //     ]
-        // }
-
-        //saida mais proxima a 1 para setar o certo
-
-        this.characteres.forEach(f => f.active = false);
-
-        this.characteres[indexCharactere].bits.forEach(b => {
-            dataset.inputs.push(Math.floor(Math.random() * 10));
-            dataset.outputs.push(b);
-        });
-
-        console.log("Início do treinamento");
-
-        while(train){
-            generationsTotal++;
-            console.log("Número da Geração: " + generationsTotal);
-
-            for (let i = 0; i < this.max; i++){
-                this.neuralNetworkService.train(neuralNetwork, dataset.inputs, dataset.outputs);
-            }
-
-            //this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[0] < 0.04 && this.neuralNetworkService.predict(neuralNetwork,dataset.inputs)[1] > 0.98
-            if(this.verifyResult(neuralNetwork, dataset)){
-                train = false;
-                this.characteres[indexCharactere].active = true;
-                
-                console.log("Caracter Encontrado: " + this.characteres[indexCharactere].name, "| Código: " + this.characteres[indexCharactere].code)
-            }
-        }
     }
 
-    private verifyResult(neuralNetwork: NeuralNetworkService.NeuralNetwork, dataset: Dataset): boolean {
-        let count = 0;
-        
-        dataset.outputs.forEach((output, i) => {
-            console.log("RESULTADO PREVISTO: " + this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i], "| SAIDA ESPERADA: " + output, "| INDEX: " + i);
+    public createDataset(): void {
+        //Inicializa a rede neural
+        this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
+        this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
+        this.datasetTest = this.neuralNetworkService.createTestEntries(1000);
 
-            if(this.neuralNetworkService.predict(neuralNetwork, dataset.inputs)[i] == output){
-                count++;
-            }
-        });
+        this.isStart = true;
 
-        console.log('Número de saídas corretas: ' + count, '\n', '\n');
+        console.log(this.datasetTrain);
+        console.log(this.datasetTest);
+    }
 
-        return count == dataset.outputs.length;
+    public start(): void {
+        this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
+        this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
+
+        console.log(this.neuralNetwork.confusionMatrix);
     }
 
     private getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    public getPrecision(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let truePositive = 0, falsePositive = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                truePositive += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+            else
+            {
+                falsePositive += this.neuralNetwork.confusionMatrix.data[j][i];
+            }
+        }
+
+        if(truePositive == 0 && falsePositive == 0) return 0;
+        
+        return truePositive / (truePositive + falsePositive);
+    }
+
+    public getRecall(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let truePositive = 0, falseNegative = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                truePositive += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+            else
+            {
+                falseNegative += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+        }
+
+        if(truePositive == 0 && falseNegative == 0) return 0;
+        
+        return truePositive / (truePositive + falseNegative);
+    }
+
+    public getEspecify(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let trueNegative = 0, falsePositive = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                for (let k = 0; k < this.neuralNetwork.outputNodesTotal; k++)
+                {
+                    if (k != i) { 
+                        trueNegative += this.neuralNetwork.confusionMatrix.data[i][j];
+                    }
+                }
+            }
+            else
+            {
+                falsePositive += this.neuralNetwork.confusionMatrix.data[j][i];
+            }
+        }
+
+        if(trueNegative == 0 && falsePositive == 0) return 0;
+        
+        return trueNegative / (trueNegative + falsePositive);
+    }
+
+    public getF1(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let precision = this.getPrecision(i), recall = this.getRecall(i);
+
+        if(precision == 0 && recall == 0) return 0;
+
+        return (2 * (recall * precision)) / (recall + precision);
     }
 }
 

@@ -70,9 +70,9 @@ input {
             .common-button{
                 width: 80px;
                 height: 30px;
+                margin-right: 16px;
                 border-radius: 4px;
                 border: none;
-                background: #f8a558;
                 color: #ffffff;
                 text-align: center;
                 display: flex;
@@ -82,15 +82,32 @@ input {
                 transition: .3s ease;
                 outline: none;
 
+                &:disabled{
+                    opacity: 0.4;
+                }
+
                 .gif{
                     display: none;
                 }
 
-                &:hover{
-                    background: #f5851d;
-                    cursor: pointer;
+                &.orange{
+                    background: #f8a558;
+
+                    &:hover{
+                        background: #f5851d;
+                        cursor: pointer;
+                    }
                 }
 
+                &.green{
+                    background: #58f8ad;
+
+                    &:hover{
+                        background: #40fca4;
+                        cursor: pointer;
+                    }
+                }
+            
                 &.is-loading{
                     .gif{
                         display: block;
@@ -105,13 +122,132 @@ input {
     }
 }
 
+.acuracy{
+    width: 1000px;
+    margin: 24px auto;
+
+    .cell{
+        width: 200px;
+        padding: 12px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .header-row{
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+        font-weight: bold;
+        background: $light-purple;
+        color: $dark-green;
+    }
+
+    .content-row{
+        display: flex;
+        align-items: stretch;
+        background: #f3f3f3;
+    }
+}
+
+.container-result{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .result {
+        width: 870px;
+        margin: 24px 0;
+
+        .cell{
+            width: 200px;
+            padding: 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-sizing: border-box;
+
+            &:first-child{
+                width: 70px;
+            }
+        }
+
+        .header-row{
+            width: 100%;
+            display: flex;
+            align-items: stretch;
+            font-weight: bold;
+            background: $light-purple;
+            color: $dark-green;
+        }
+
+        .content-row{
+            display: flex;
+            align-items: stretch;
+            background: #f9f9f9;
+
+            &:nth-child(even) {
+                background: #f1f1f1;
+            }
+        }
+    }
+
+    .matrix-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 900px;
+        position: relative;
+        margin: 10px 0;
+    
+        .row{
+            display: flex;
+        }
+    
+        .left{
+            position: absolute;
+            left: -25px;
+            top: 25px;
+        }
+    
+        .cell{
+            font-size: 14px;
+            font-family: $font-montserrat;
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+            &.letter{
+                font-weight: bold;
+                border: none;
+            }
+    
+            &.bold{
+                font-weight: bold;
+            }
+        }
+    }
+}
+
 .list{
     display: flex;
     flex-wrap: wrap;
 
-    .matrix{
+    .letter-test{
         width: 120px;
         margin: 24px;
+    }
+
+    .matrix{
+        width: 120px;
+        margin-top: 5px;
         display: grid;
         grid-template-columns: repeat(6, 1fr);
 
@@ -120,6 +256,8 @@ input {
         }
     
         .cell{
+            width: 20px;
+            height: 20px;
             color: transparent;
             border: 1px solid #ccc;
     
