@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
         //Inicializa a rede neural
         this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
         this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
-        this.datasetTest = this.neuralNetworkService.createTestEntries(this.numberOfEntrieTest);
+        this.datasetTest = this.neuralNetworkService.createTestEntries(1000);
 
         this.isStart = true;
     }
@@ -54,6 +54,87 @@ export class AppComponent implements OnInit {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    public getPrecision(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let truePositive = 0, falsePositive = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                truePositive += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+            else
+            {
+                falsePositive += this.neuralNetwork.confusionMatrix.data[j][i];
+            }
+        }
+
+        if(truePositive == 0 && falsePositive == 0) return 0;
+        
+        return truePositive / (truePositive + falsePositive);
+    }
+
+    public getRecall(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let truePositive = 0, falseNegative = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                truePositive += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+            else
+            {
+                falseNegative += this.neuralNetwork.confusionMatrix.data[i][j];
+            }
+        }
+
+        if(truePositive == 0 && falseNegative == 0) return 0;
+        
+        return truePositive / (truePositive + falseNegative);
+    }
+
+    public getEspecify(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let trueNegative = 0, falsePositive = 0
+
+        for (let j = 0; j < this.neuralNetwork.outputNodesTotal; j++)
+        {
+            if (i == j)
+            {
+                for (let k = 0; k < this.neuralNetwork.outputNodesTotal; k++)
+                {
+                    if (k != i) { 
+                        trueNegative += this.neuralNetwork.confusionMatrix.data[i][j];
+                    }
+                }
+            }
+            else
+            {
+                falsePositive += this.neuralNetwork.confusionMatrix.data[j][i];
+            }
+        }
+
+        if(trueNegative == 0 && falsePositive == 0) return 0;
+        
+        return trueNegative / (trueNegative + falsePositive);
+    }
+
+    public getF1(i: number): number {
+        if(!this.neuralNetwork.finish) return 0;
+
+        let precision = this.getPrecision(i), recall = this.getRecall(i);
+
+        if(precision == 0 && recall == 0) return 0;
+
+        return (2 * (recall * precision)) / (recall + precision);
     }
 }
 

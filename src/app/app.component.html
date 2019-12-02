@@ -30,11 +30,6 @@
     </div>
 </section>
 
-<!-- <section class="dataSet" >
-    {{data.name}}
-</section> -->
-
-
 <!-- <div class="list">
     <div class="letter-test" *ngFor="let matrix of datasetTrain">
         {{matrix.name}}
@@ -57,26 +52,62 @@
     </div>
 </div>
 
-<section class="matrix-container">
-    <ng-container *ngIf="neuralNetwork">
-        <div class="row">
-            <div class="cell letter" *ngFor="let character of characteres; let i = index">
-                {{character.name}}
-            </div>
-        </div>
-        <div class="matrix">
-            <div class="row" *ngFor="let a of characteres; let i = index">
-                <div class="cell" [ngClass]="{'bold': neuralNetwork.confusionMatrix.data[i][j] > 0}"
-                    *ngFor="let b of characteres; let j = index">
-                    {{neuralNetwork.confusionMatrix.data[i][j]}}
+<section class="acuracy" *ngIf="neuralNetwork">
+    <div class="header-row">
+        <div class="cell">Acurácia</div>
+        <div class="cell">Erro</div>
+        <div class="cell">Sensitividade</div>
+        <div class="cell">Precisão</div>
+        <div class="cell">Especificidade</div>
+    </div>
+    <div class="content-row">
+        <div class="cell">{{neuralNetwork.acuracy}}</div>
+        <div class="cell">{{neuralNetwork.error}}</div>
+        <div class="cell">{{neuralNetwork.recall}}</div>
+        <div class="cell">{{neuralNetwork.precision}}</div>
+        <div class="cell">{{neuralNetwork.especify}}</div>
+    </div>
+</section>
+
+<section class="container-result" *ngIf="neuralNetwork">
+    <section class="matrix-container">
+        <ng-container>
+            <div class="row">
+                <div class="cell letter" *ngFor="let character of characteres; let i = index">
+                    {{character.name}}
                 </div>
             </div>
-        </div>
-
-        <div class="left">
-            <div class="cell letter" *ngFor="let character of characteres; let i = index">
-                {{character.name}}
+            <div class="matrix">
+                <div class="row" *ngFor="let a of characteres; let i = index">
+                    <div class="cell" [ngClass]="{'bold': neuralNetwork.confusionMatrix.data[i][j] > 0}"
+                        *ngFor="let b of characteres; let j = index">
+                        {{neuralNetwork.confusionMatrix.data[i][j]}}
+                    </div>
+                </div>
             </div>
+
+            <div class="left">
+                <div class="cell letter" *ngFor="let character of characteres; let i = index">
+                    {{character.name}}
+                </div>
+            </div>
+        </ng-container>
+    </section>
+
+    <div class="result">
+        <div class="header-row">
+            <div class="cell">Classe</div>
+            <div class="cell">Sensitividade</div>
+            <div class="cell">Precisão</div>
+            <div class="cell">Especificidade</div>
+            <div class="cell">F1 Score</div>
         </div>
-    </ng-container>
+        <div class="content-row" *ngFor="let character of characteres; let i = index">
+            <div class="cell"><b>{{character.name}}</b></div>
+            <div class="cell">{{getRecall(i)}}</div>
+            <div class="cell">{{getPrecision(i)}}</div>
+            <div class="cell">{{getEspecify(i)}}</div>
+            <div class="cell">{{getF1(i)}}</div>
+        </div>
+    </div>
 </section>
