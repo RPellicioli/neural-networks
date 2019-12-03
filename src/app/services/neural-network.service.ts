@@ -337,7 +337,7 @@ export class NeuralNetworkService {
             this.testEntry(neuralNetwork, entry, guesses);
         });
         
-        console.log(guesses);
+        // console.log(guesses);
 
         this.calculateMetrics(neuralNetwork);
 
@@ -427,7 +427,7 @@ export class NeuralNetworkService {
                     value += neuralNetwork.outputNodes[j].value;
                 }
 
-                console.log("OUT: " + output / neuralNetwork.outputNodesTotal, "ERROR: " + error / neuralNetwork.outputNodesTotal, "VALUE: " + value / neuralNetwork.outputNodesTotal);
+                // console.log("OUT: " + output / neuralNetwork.outputNodesTotal, "ERROR: " + error / neuralNetwork.outputNodesTotal, "VALUE: " + value / neuralNetwork.outputNodesTotal);
             }
         }
     }
@@ -545,8 +545,6 @@ export class NeuralNetworkService {
         neuralNetwork.precision = neuralNetwork.truePositive / (neuralNetwork.truePositive + neuralNetwork.falsePositive);
         neuralNetwork.especify = neuralNetwork.trueNegative / (neuralNetwork.trueNegative + neuralNetwork.falsePositive);
         neuralNetwork.fmeasure = 2 * (neuralNetwork.recall * neuralNetwork.precision) / (neuralNetwork.recall + neuralNetwork.precision);
-
-        console.log(`"accuracy: ${neuralNetwork.acuracy} error: ${neuralNetwork.error} recall: ${neuralNetwork.recall} precision: ${neuralNetwork.precision} especify: ${neuralNetwork.especify} fmeasure: ${neuralNetwork.fmeasure}"`);
 
         neuralNetwork.finish = true;
     }

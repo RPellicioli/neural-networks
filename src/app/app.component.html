@@ -10,12 +10,16 @@
                 <input type="text" [(ngModel)]="numberOfEntries" class="common-input" id="max" />
             </div>
 
+            <button class="common-button orange" [disabled]="isTrain" (click)="createDataset()">
+                <span>Criar</span>
+            </button>
+
             <div class="wrap-input">
                 <label for="numberOfEntries">Dataset Teste</label>
                 <input type="text" [(ngModel)]="numberOfEntrieTest" class="common-input" id="max" />
             </div>
 
-            <button class="common-button orange" [disabled]="isLoading" (click)="createDataset()">
+            <button class="common-button orange" [disabled]="isLoading" (click)="createDatasetTest()">
                 <span>Criar</span>
             </button>
 
@@ -23,7 +27,7 @@
                 <span>Treinar</span>
             </button>
 
-            <button class="common-button green" [disabled]="!isTest" (click)="test()">
+            <button class="common-button green" [disabled]="!isTest || !isTrain" (click)="test()">
                 <span>Testar</span>
             </button>
         </div>
@@ -91,6 +95,11 @@
                     {{character.name}}
                 </div>
             </div>
+
+            <section class="details">
+                <div><b>Acertos: </b> {{hits}}</div>
+                <div><b>Erros: </b> {{wrongs}}</div>
+            </section>
         </ng-container>
     </section>
 

@@ -11,19 +11,24 @@ export class AppComponent implements OnInit {
     title = 'neural-networks';
     public characteres: Array<NeuralNetworkService.Character>;
     public inputNodes = 48;
-    public hideNodes = 24;
+    public hideNodes = 22;
     public outputNodes = 36;
     public learningRate = 0.1;
     public numberOfEntries = 500;
-    public numberOfEntrieTest = 10;
+    public numberOfEntrieTest = 20;
     public max = 1000;
 
+    public hits: number = 0;
+    public wrongs: number = 0;
+
     public isStart: boolean;
+    public isTrain: boolean;
     public isTest: boolean;
 
     public neuralNetwork: NeuralNetworkService.NeuralNetwork;
     public datasetTrain: Array<NeuralNetworkService.Character>;
     public datasetTest: Array<NeuralNetworkService.Character>;
+    public guesses: Array<NeuralNetworkService.Guess>;
 
     constructor(public matrixService: MatrixService, public neuralNetworkService: NeuralNetworkService) { }
 
@@ -35,19 +40,44 @@ export class AppComponent implements OnInit {
         //Inicializa a rede neural
         this.neuralNetwork = new NeuralNetworkService.NeuralNetwork(this.inputNodes, this.hideNodes, this.outputNodes, this.learningRate);
         this.datasetTrain = this.neuralNetworkService.createTrainingEntries(this.numberOfEntries);
-        this.datasetTest = this.neuralNetworkService.createTestEntries(1000);
 
         this.isStart = true;
     }
 
-    public start(): void {
-        this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
+    public createDatasetTest(): void {
+        this.hits = 0;
+        this.wrongs = 0;
 
+        this.neuralNetwork.acuracy = 0;
+        this.neuralNetwork.error = 0;
+        this.neuralNetwork.recall = 0;
+        this.neuralNetwork.precision = 0;
+        this.neuralNetwork.especify = 0;
+        this.neuralNetwork.fmeasure = 0;
+
+        this.neuralNetwork.truePositive = 0;
+        this.neuralNetwork.trueNegative = 0;
+        this.neuralNetwork.falsePositive = 0;
+        this.neuralNetwork.falseNegative = 0;
+        this.neuralNetwork.confusionMatrix = new MatrixService.Matrix(this.neuralNetwork.outputNodesTotal, this.neuralNetwork.outputNodesTotal, true);
+
+        this.datasetTest = this.neuralNetworkService.createTestEntries(this.numberOfEntrieTest);
         this.isTest = true;
     }
 
+    public start(): void {
+        this.neuralNetworkService.trainNetwork(this.neuralNetwork, this.datasetTrain);
+        this.isTrain = true;
+        this.isStart = false;
+    }
+
     public test(): void {
-        this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
+        this.guesses = this.neuralNetworkService.testNetwork(this.neuralNetwork, this.datasetTest);
+
+        this.guesses.forEach(g => {
+            this.hits += g.rightGuess;
+            this.wrongs += g.wrongGuess;
+        });
     }
 
     private getRandomInt(min, max) {

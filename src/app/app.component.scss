@@ -213,6 +213,26 @@ input {
             left: -25px;
             top: 25px;
         }
+
+        .details{
+            position: absolute;
+            left: -125px;
+            top: 45%;
+
+            div{
+                b{
+                    color: $dark-green;
+                }
+
+                &:first-child{
+                    margin-bottom: 20px;
+
+                    b{
+                        color: #14e425;
+                    }
+                }
+            }
+        }
     
         .cell{
             font-size: 14px;
